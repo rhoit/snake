@@ -7,7 +7,25 @@ var cols = Math.floor(width/cell)
 var rows = Math.floor(height/cell)
 
 var space = 2
-var food  = []
+
+var food = new function() {
+    this.x = null
+    this.y = null
+
+    this.generate = function() {
+        this.x = Math.floor(Math.random() * cols) * cell
+        this.y = Math.floor(Math.random() * rows) * cell
+    }
+
+    this.draw = function() {
+        ctx.fillStyle = '#ff0044'
+        ctx.globalAlpha = 1
+        ctx.fillRect(
+            this.x+space, this.y+space,
+            cell-space, cell-space
+        )
+    }
+}
 
 
 function bound(val, lower, upper) {
@@ -15,19 +33,8 @@ function bound(val, lower, upper) {
         console.log("dead:", val)
         clearInterval(interval)
         interval = null
-        snake = null
     }
     return val
-}
-
-
-function generateFood() {
-    ctx.fillStyle = '#ff0044'
-    ctx.globalAlpha = 1
-    x = Math.floor(Math.random() * cols) * cell
-    y = Math.floor(Math.random() * rows) * cell
-    ctx.fillRect(x+space, y+space, cell-space, cell-space);
-    food = [x, y]
 }
 
 
@@ -36,14 +43,13 @@ function Snake(x, y, len, speedx, speedy) {
     this.y = y
     this.len = len
 
-    this.tail = 0
-    this.body = [ [x, y] ]
-    this.tail_image = [x, y]
+    this.tail = [x, y]
 
     this.speedx = speedx
     this.speedy = speedy
 
     this.speed = function(x, y) {
+        if (this.speedx == -x || this.speedy == -y) return
         this.speedx = x
         this.speedy = y
     }
@@ -59,22 +65,20 @@ function Snake(x, y, len, speedx, speedy) {
     }
 
     this.update = function () {
-        this.show()
-        this.tail_image = [this.x, this.y]
         x = this.x + this.speedx * cell
         y = this.y + this.speedy * cell
 
         this.x = bound(x, 0, width - cell)
         this.y = bound(y, 0, height - cell)
 
-        this.body[this.tail] = [ this.x, this.y ]
-        this.tail++
-        if (this.tail > this.len)
-            this.tail = 0
+        for (var i = 0; i < this.len; i++) {
+            this.tail[i] = this.tail[i+1]
+        }
+        this.tail[this.len] = [ this.x, this.y ]
     }
 
 
-    this.show = function() {
+    this.draw = function() {
         ctx.fillStyle   = '#abffab'
         ctx.globalAlpha = 0.6
         ctx.lineWidth   = 1
@@ -82,10 +86,8 @@ function Snake(x, y, len, speedx, speedy) {
             this.x+space, this.y+space,
             cell-space, cell-space
         )
-
-        if (this.body.length != this.len) return
         ctx.clearRect(
-            this.tail_image[0]+space, this.tail_image[1]+space,
+            this.tail[0][0]+space, this.tail[0][1]+space,
             cell-space, cell-space
         )
     }
@@ -110,13 +112,18 @@ function keyBinding(event) {
 
 
 function gameLoop() {
-    if (snake.eat(food[0], food[1])) generateFood()
+    if (snake.eat(food.x, food.y)) {
+        food.generate()
+        food.draw()
+    }
     snake.update()
+    snake.draw()
 }
 
 
 function newGame() {
-    generateFood()
+    food.generate()
+    food.draw()
     snake = new Snake(2*cell, 2*cell, 1, 1, 0)
     interval = setInterval(gameLoop, 100)
 }
