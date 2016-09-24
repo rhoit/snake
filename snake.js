@@ -9,13 +9,17 @@ var height = snake_canvas.height
 var cols   = Math.floor(width/cell)
 var rows   = Math.floor(height/cell)
 
+var interval = null
+var moves    = 0
+
 var food = new function() {
     this.x = null
     this.y = null
 
-    this.generate = function() {
-        this.x = Math.floor(Math.random() * cols) * cell
-        this.y = Math.floor(Math.random() * rows) * cell
+    this.generate = function(x=null, y=null) {
+
+        this.x = x != null?x:Math.floor(Math.random() * cols) * cell
+        this.y = y != null?y:Math.floor(Math.random() * rows) * cell
 
         // don't place food on the snake
         for (var i = 1; i < snake.len; i++) {
@@ -50,6 +54,17 @@ function die(msg) {
     console.log("dead:", msg)
     clearInterval(interval)
     interval = null
+    banner("GAME OVER")
+}
+
+function banner(msg0, msg1="press any key ...") {
+    ctx.globalAlpha = 0.8
+    ctx.font = "35px serif"
+    ctx.textAlign = "center"
+    ctx.fillStyle = 'white'
+    ctx.fillText(msg0, width/2, height/2 - 15)
+    ctx.font = "25px serif"
+    ctx.fillText(msg1, width/2, height/2 + 15)
 }
 
 
@@ -132,8 +147,11 @@ function Snake(len, dirx, diry) {
 
 function keyBinding(event) {
     if (interval === null) {
-        ctx.clearRect(0, 0, width, height)
         newGame()
+        ctx.clearRect(0, 0, width, height)
+        interval = setInterval(gameLoop, delay)
+        food.generate()
+        food.draw()
         return
     }
 
@@ -154,12 +172,14 @@ function gameLoop() {
     }
     snake.draw()
     snake.update()
+    moves++
+    view_len.innerHTML = snake.len
+    view_moves.innerHTML = moves
 }
 
 
 function newGame() {
+    moves = 0
     snake = new Snake(3, 1, 0)
-    food.generate()
-    food.draw()
-    interval = setInterval(gameLoop, delay)
+    banner("SNAKE");
 }

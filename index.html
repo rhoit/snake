@@ -5,13 +5,43 @@
   </head>
 
   <body>
-    <canvas id="snake_canvas" width="350px" height="350px" style="background-color: #333333">
-      Browser Won't Support, Update it fast!
-    </canvas>
+    <div style="float:left">
+      <canvas id="snake_canvas" width="350px" height="350px" style="background-color: #333333">
+        Browser Won't Support, Update it fast!
+      </canvas>
+    </div>
+    <div style="float:left; padding-left:10px">
+      <div id="stats">
+        <h4>stats</h4>
+        <table>
+          <tr><td>length</td><td id="view_len"></td></tr>
+          <tr><td>moves</td><td id="view_moves"></td></tr>
+        </table>
+      </div>
+
+      <h4>AI</h4>
+      <p>nodes <span id="view_nodes">0</span></p>
+      <select id="algo">
+        <option value="a_star">A*</option>
+        <option value="bfs">Breath First Search</option>
+        <option value="dfs">Depth First Search</option>
+      </select>
+      <button id="ai" style="width:50px" onclick="toggle_ai()">ON</button>
+      <p>press 'a' to toggle AI</p>
+    </div>
   </body>
   <script src="snake.js"></script>
+  <script src="ai.js"></script>
   <script>
     window.addEventListener("keydown", keyBinding, true)
+    window.addEventListener(
+        "keydown",
+        function (event) {
+            if (event.keyCode == 65) {
+                toggle_ai()
+            }
+        }
+    )
     newGame()
   </script>
 </html>
