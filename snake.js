@@ -1,6 +1,6 @@
-var delay  = 100
-var cell   = 20
-var space  = 2
+var delay = 100
+var cell  = 20
+var pad   = 2
 
 var ctx    = snake_canvas.getContext('2d')
 
@@ -38,8 +38,8 @@ var food = new function() {
         ctx.fillStyle = '#ff0044'
         ctx.globalAlpha = 1
         ctx.fillRect(
-            this.x+space, this.y+space,
-            cell-space, cell-space
+            this.x+pad, this.y+pad,
+            cell-pad, cell-pad
         )
     }
 }
@@ -121,8 +121,8 @@ function Snake(len, dirx, diry) {
     this.draw = function() {
         try {
             ctx.clearRect(
-                this.tail[0][0]+space, this.tail[0][1]+space,
-                cell-space, cell-space
+                this.tail[0][0]+pad, this.tail[0][1]+pad,
+                cell-pad, cell-pad
             )
         }
         catch(err) {
@@ -133,8 +133,8 @@ function Snake(len, dirx, diry) {
         ctx.globalAlpha = 0.6
         ctx.lineWidth   = 1
         ctx.fillRect(
-            this.x+space, this.y+space,
-            cell-space, cell-space
+            this.x+pad, this.y+pad,
+            cell-pad, cell-pad
         )
     }
 
@@ -148,10 +148,6 @@ function Snake(len, dirx, diry) {
 function keyBinding(event) {
     if (interval === null) {
         newGame()
-        ctx.clearRect(0, 0, width, height)
-        interval = setInterval(gameLoop, delay)
-        food.generate()
-        food.draw()
         return
     }
 
@@ -179,7 +175,10 @@ function gameLoop() {
 
 
 function newGame() {
+    ctx.clearRect(0, 0, width, height)
     moves = 0
     snake = new Snake(3, 1, 0)
-    banner("SNAKE");
+    food.generate()
+    food.draw()
+    interval = setInterval(gameLoop, delay)
 }
