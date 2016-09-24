@@ -1,12 +1,13 @@
+var delay  = 100
+var cell   = 20
+var space  = 2
+
 var ctx    = snake_canvas.getContext('2d')
+
 var width  = snake_canvas.width
 var height = snake_canvas.height
-
-var cell = 20
-var cols = Math.floor(width/cell)
-var rows = Math.floor(height/cell)
-
-var space = 2
+var cols   = Math.floor(width/cell)
+var rows   = Math.floor(height/cell)
 
 var food = new function() {
     this.x = null
@@ -19,7 +20,7 @@ var food = new function() {
         // don't place food on the snake
         for (var i = 1; i < snake.len; i++) {
             if (
-                distance(
+                eucliDist(
                     snake.tail[i][0], this.x,
                     snake.tail[i][1], this.y
                 ) > 1
@@ -40,7 +41,7 @@ var food = new function() {
 }
 
 
-function distance(x0, x1, y0, y1) {
+function eucliDist(x0, x1, y0, y1) {
     return Math.sqrt(Math.pow(x0-x1, 2) + Math.pow(y0-y1, 2))
 }
 
@@ -87,7 +88,7 @@ function Snake(len, dirx, diry) {
     }
 
     this.eat = function(x, y) {
-        if (distance(this.x, x, this.y, y) > 1) return false
+        if (eucliDist(this.x, x, this.y, y) > 1) return false
         this.len++
         this.tail[this.len] = [this.x, this.y]
         return true
@@ -103,14 +104,6 @@ function Snake(len, dirx, diry) {
     }
 
     this.draw = function() {
-        ctx.fillStyle   = '#abffab'
-        ctx.globalAlpha = 0.6
-        ctx.lineWidth   = 1
-        ctx.fillRect(
-            this.x+space, this.y+space,
-            cell-space, cell-space
-        )
-
         try {
             ctx.clearRect(
                 this.tail[0][0]+space, this.tail[0][1]+space,
@@ -121,6 +114,13 @@ function Snake(len, dirx, diry) {
             console.log(this.tail)
             die('program crash')
         }
+        ctx.fillStyle   = '#abffab'
+        ctx.globalAlpha = 0.6
+        ctx.lineWidth   = 1
+        ctx.fillRect(
+            this.x+space, this.y+space,
+            cell-space, cell-space
+        )
     }
 
     for (var i = 0; i <= len; i++) {
@@ -161,7 +161,5 @@ function newGame() {
     snake = new Snake(3, 1, 0)
     food.generate()
     food.draw()
-    interval = setInterval(gameLoop, 100)
+    interval = setInterval(gameLoop, delay)
 }
-
-window.addEventListener('keydown', keyBinding)
