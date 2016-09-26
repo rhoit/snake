@@ -2,10 +2,10 @@ var delay = 100
 var cell  = 20
 var pad   = 2
 
-var ctx    = snake_canvas.getContext('2d')
+var ctx    = canvas_snake.getContext('2d')
 
-var width  = snake_canvas.width
-var height = snake_canvas.height
+var width  = canvas_snake.width
+var height = canvas_snake.height
 var cols   = Math.floor(width/cell) - 1
 var rows   = Math.floor(height/cell) - 1
 
@@ -56,6 +56,14 @@ var food = new function() {
         this.x = x != null?x:Math.floor(Math.random() * cols)
         this.y = y != null?y:Math.floor(Math.random() * rows)
 
+        // don't erase the snake after image if food
+        if (
+            collision(
+                snake.tail[0][0], this.x,
+                snake.tail[0][1], this.y
+            )
+        ) snake.tail[0] = []
+
         // don't place food on the snake
         for (var i = 1; i < snake.len; i++) {
             if (
@@ -84,7 +92,9 @@ function Snake(len, dx=1, dy=0) {
     this.x = 0
     this.y = 1
 
-    this.tail = [] // first var is after image
+    // first var is the after image
+    // last  var is the head
+    this.tail = []
 
     this.dx = dx
     this.dy = dy
@@ -144,7 +154,7 @@ function Snake(len, dx=1, dy=0) {
 }
 
 
-function playControl(dx, dy) {
+function userControl(dx, dy) {
     if (interval === null)
         interval = setInterval(gameLoop, delay)
     snake.dir(dx, dy)
@@ -158,10 +168,10 @@ function keyBinding(event) {
     }
 
     switch (event.keyCode) {
-        case 37: playControl(-1, 0); break // LEFT
-        case 38: playControl(0, -1); break // UP
-        case 39: playControl(+1, 0); break // RIGHT
-        case 40: playControl(0, +1); break // DOWN
+        case 37: userControl(-1, 0); break // LEFT
+        case 38: userControl(0, -1); break // UP
+        case 39: userControl(+1, 0); break // RIGHT
+        case 40: userControl(0, +1); break // DOWN
         case 80: // 'p' pause toggle
             if (interval === null) {
                 interval = setInterval(gameLoop, delay)
