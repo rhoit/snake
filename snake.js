@@ -9,6 +9,7 @@ var height = snake_canvas.height
 var cols   = Math.floor(width/cell) - 1
 var rows   = Math.floor(height/cell) - 1
 
+var dead     = null // place dead snake
 var snake    = null
 var interval = null
 var moves    = 0
@@ -27,10 +28,11 @@ function bound(val, lower, upper) {
 
 
 function die(msg) {
-    console.log("dead:", msg, snake.x, snake.y)
+    console.log("dead: (%d, %d)", snake.x, snake.y, msg)
     clearInterval(interval)
     interval = null
-    snake = null
+    dead     = snake
+    snake    = null
     banner("GAME OVER")
 }
 
@@ -82,7 +84,6 @@ function Snake(len, dx=1, dy=0) {
     this.x = 0
     this.y = 1
 
-    this.len  = len
     this.tail = [] // first var is after image
 
     this.dx = dx
@@ -95,8 +96,7 @@ function Snake(len, dx=1, dy=0) {
 
     this.eat = function(x, y) {
         if (collision(this.x, x, this.y, y)) return false
-        this.len++
-        this.tail[this.len] = [this.x, this.y]
+        this.tail.push([ this.x, this.y ])
         return true
     }
 
@@ -106,17 +106,16 @@ function Snake(len, dx=1, dy=0) {
 
         this.x = bound(x, 0, cols)
         this.y = bound(y, 0, rows)
-
-        this.tail[0] = this.tail[1]
-        for (var i = 1; i < this.len; i++) {
+        for (var i = 0; i < this.tail.length - 1; i++) {
+            this.tail[i] = this.tail[i+1]
             if (this.eat(this.tail[i][0], this.tail[i][1])) {
+                if (i == 0) this.tail[0] = this.tail[2]
                 this.draw() // show collision
                 die("tail bite")
                 return
             }
-            this.tail[i] = this.tail[i+1]
         }
-        this.tail[this.len] = [ this.x, this.y ]
+        this.tail[i] = [ this.x, this.y ]
     }
 
     this.draw = function() {
@@ -132,7 +131,6 @@ function Snake(len, dx=1, dy=0) {
         }
         ctx.fillStyle   = '#abffab'
         ctx.globalAlpha = 0.6
-        ctx.lineWidth   = 1
         ctx.fillRect(
             this.x*cell+pad, this.y*cell+pad,
             cell-pad, cell-pad
@@ -140,7 +138,7 @@ function Snake(len, dx=1, dy=0) {
     }
 
     for (var i = 0; i <= len; i++) {
-        this.tail[i] = [ this.x, this.y ]
+        this.tail.push([ this.x, this.y ])
     }
     this.update()
 }
@@ -160,11 +158,11 @@ function keyBinding(event) {
     }
 
     switch (event.keyCode) {
-        case 37: playControl(-1, 0); break //LEFT
-        case 38: playControl(0, -1); break //UP
-        case 39: playControl(+1, 0); break //RIGHT
-        case 40: playControl(0, +1); break //DOWN
-        case 80:
+        case 37: playControl(-1, 0); break // LEFT
+        case 38: playControl(0, -1); break // UP
+        case 39: playControl(+1, 0); break // RIGHT
+        case 40: playControl(0, +1); break // DOWN
+        case 80: // 'p' pause toggle
             if (interval === null) {
                 interval = setInterval(gameLoop, delay)
             } else {
@@ -177,7 +175,7 @@ function keyBinding(event) {
 
 
 function gameLoop() {
-    view_len.innerHTML = snake.len
+    view_len.innerHTML   = snake.tail.length - 1
     view_moves.innerHTML = moves
     snake.draw()
     if (snake.eat(food.x, food.y)) {
