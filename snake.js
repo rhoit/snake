@@ -15,6 +15,13 @@ var interval = null
 var moves    = 0
 
 
+function drawCell(x, y, fill='#abffab', alpha=0.6) {
+    ctx.fillStyle   = fill
+    ctx.globalAlpha = alpha
+    ctx.fillRect(x*cell+pad, y*cell+pad, cell-pad, cell-pad)
+}
+
+
 function collision(x0, x1, y0, y1) {
     if ( x0 == x1 && y0 == y1) return false
     return true
@@ -22,8 +29,9 @@ function collision(x0, x1, y0, y1) {
 
 
 function bound(val, lower, upper) {
-    if (lower > val || upper < val) die("wall")
-    return val
+    if (lower <= val && upper >= val) return val
+    drawCell(snake.x, snake.y, "yellow") // show collision
+    die("wall")
 }
 
 
@@ -56,7 +64,7 @@ var food = new function() {
         this.x = x != null?x:Math.floor(Math.random() * cols)
         this.y = y != null?y:Math.floor(Math.random() * rows)
 
-        // don't erase the snake after image if food
+        // don't erase the tail-end if food is there
         if (
             collision(
                 snake.tail[0][0], this.x,
@@ -78,12 +86,7 @@ var food = new function() {
     }
 
     this.draw = function() {
-        ctx.fillStyle   = '#ff0044'
-        ctx.globalAlpha = 1
-        ctx.fillRect(
-            this.x*cell+pad, this.y*cell+pad,
-            cell-pad, cell-pad
-        )
+        drawCell(this.x, this.y, '#ff0044', 1)
     }
 }
 
@@ -129,28 +132,16 @@ function Snake(len, dx=1, dy=0) {
     }
 
     this.draw = function() {
-        try {
-            ctx.clearRect(
-                this.tail[0][0]*cell+pad, this.tail[0][1]*cell+pad,
-                cell-pad, cell-pad
-            )
-        }
-        catch(err) {
-            console.log(this.tail)
-            die('program crash')
-        }
-        ctx.fillStyle   = '#abffab'
-        ctx.globalAlpha = 0.6
-        ctx.fillRect(
-            this.x*cell+pad, this.y*cell+pad,
+        ctx.clearRect(
+            this.tail[0][0]*cell+pad, this.tail[0][1]*cell+pad,
             cell-pad, cell-pad
         )
+        drawCell(this.x, this.y)
     }
 
     for (var i = 0; i <= len; i++) {
         this.tail.push([ this.x, this.y ])
     }
-    this.update()
 }
 
 
@@ -185,6 +176,8 @@ function keyBinding(event) {
 
 
 function gameLoop() {
+    snake.update()
+    moves++
     view_len.innerHTML   = snake.tail.length - 1
     view_moves.innerHTML = moves
     snake.draw()
@@ -192,8 +185,6 @@ function gameLoop() {
         food.generate()
         food.draw()
     }
-    snake.update()
-    moves++
 }
 
 
