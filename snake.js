@@ -73,13 +73,14 @@ var food = new function() {
         ) snake.tail[0] = []
 
         // don't place food on the snake
-        for (var i = 1; i < snake.len; i++) {
+        for (var i = 1; i < snake.tail.length; i++) {
             if (
                 collision(
                     snake.tail[i][0], this.x,
                     snake.tail[i][1], this.y
                 )
             ) continue
+            console.log("food collide: (%d, %d)", this.x, this.y)
             this.generate()
             break
         }
