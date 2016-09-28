@@ -5,8 +5,12 @@
   </head>
 
   <body>
-    <div style="float:left">
-      <canvas id="snake_canvas" width="350px" height="350px" style="background-color: #333333">
+    <h1>Snake</h1>
+    <div style="float:left; position:relative">
+      <canvas id="canvas_grid" width="342px" height="342px" style="position:absolute; z-index:1">
+        Browser Won't Support, Update it fast!
+      </canvas>
+      <canvas id="canvas_snake" width="342px" height="342px" style="background-color: #333333;">
         Browser Won't Support, Update it fast!
       </canvas>
     </div>
@@ -14,14 +18,14 @@
       <div id="stats">
         <h4>stats</h4>
         <table>
-          <tr><td>length</td><td id="view_len"></td></tr>
-          <tr><td>moves</td><td id="view_moves"></td></tr>
+          <tr><td>length</td><td id="view_len">0</td></tr>
+          <tr><td>moves</td><td id="view_moves">0</td></tr>
         </table>
       </div>
 
       <h4>AI</h4>
       <p>nodes <span id="view_nodes">0</span></p>
-      <select id="algo">
+      <select id="ai_type">
         <option value="a_star">A*</option>
         <option value="bfs">Breath First Search</option>
         <option value="dfs">Depth First Search</option>
@@ -29,9 +33,15 @@
       <button id="ai" style="width:50px" onclick="toggle_ai()">ON</button>
       <p>press 'a' to toggle AI</p>
     </div>
+    <div>
+      <input id="toggle_grid" type="checkbox" onclick="drawGridToggle(this)">grid</input>
+      <input id="toggle_wall" type="checkbox" onclick="wallToggle(this)">wall</input>
+    </div>
   </body>
   <script src="snake.js"></script>
+  <script src="pathfinding-browser.js"></script>
   <script src="ai.js"></script>
+
   <script>
     banner("SNAKE");
     window.addEventListener("keydown", keyBinding, true)
@@ -43,5 +53,29 @@
             }
         }
     )
+    var gctx  = canvas_grid.getContext('2d')
+
+    function drawGridToggle(element) {
+        if (! element.checked) {
+            gctx.clearRect(0, 0, width, height)
+            return
+        }
+
+        gctx.lineWidth   = 1
+        gctx.strokeStyle = '#444444'
+
+        for ( var i=0; i <= cols + 1; i++) {
+            gctx.beginPath();
+            gctx.moveTo(i*cell+1, 0);
+            gctx.lineTo(i*cell+1, height);
+            gctx.stroke();
+        }
+        for ( var i=0; i <= rows + 1; i++) {
+            gctx.beginPath();
+            gctx.moveTo(0, i*cell+1);
+            gctx.lineTo(width, i*cell+1);
+            gctx.stroke();
+        }
+    }
   </script>
 </html>
