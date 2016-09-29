@@ -15,22 +15,22 @@ var interval = null
 var moves    = 0
 
 
-function drawCell(x, y, fill='#abffab', alpha=0.6) {
+function drawCell(pos, fill='#abffab', alpha=0.6) {
     ctx.fillStyle   = fill
     ctx.globalAlpha = alpha
-    ctx.fillRect(x*cell+pad, y*cell+pad, cell-pad, cell-pad)
+    ctx.fillRect(pos.x*cell+pad, pos.y*cell+pad, cell-pad, cell-pad)
 }
 
 
-function collision(x0, x1, y0, y1) {
-    if ( x0 == x1 && y0 == y1) return false
+function collision(pos0, pos1) {
+    if ( pos0.x == pos1.x && pos0.y == pos1.y) return false
     return true
 }
 
 
 function bound(val, lower, upper) {
     if (lower <= val && upper >= val) return val
-    drawCell(snake.x, snake.y, "yellow") // show collision
+    drawCell(snake, "yellow") // show collision
     die("wall")
 }
 
@@ -66,12 +66,7 @@ var food = new function() {
 
         // don't place food on the snake
         for (var i = 1; i < snake.tail.length; i++) {
-            if (
-                collision(
-                    snake.tail[i].x, this.x,
-                    snake.tail[i].y, this.y
-                )
-            ) continue
+            if (collision(snake.tail[i], this)) continue
             console.log("food collide: (%d, %d)", this.x, this.y)
             this.generate()
             break
@@ -79,7 +74,7 @@ var food = new function() {
     }
 
     this.draw = function() {
-        drawCell(this.x, this.y, '#ff0044', 1)
+        drawCell(this, '#ff0044', 1)
     }
 }
 
@@ -100,8 +95,8 @@ function Snake(len, dx=1, dy=0) {
         this.dy = y
     }
 
-    this.eat = function(x, y) {
-        if (collision(this.x, x, this.y, y)) return false
+    this.eat = function(pos) {
+        if (collision(this, pos)) return false
         this.tail.push({ x: this.x, y:this.y })
         return true
     }
@@ -114,10 +109,11 @@ function Snake(len, dx=1, dy=0) {
         this.y = bound(y, 0, rows)
         for (var i = 0; i < this.tail.length - 1; i++) {
             this.tail[i] = this.tail[i+1]
-            if (this.eat(this.tail[i].x, this.tail[i].y)) {
+            if (this.eat(this.tail[i])) {
                 if (i == 0) this.tail[0] = this.tail[2]
                 this.draw() // show collision
                 die("tail bite")
+                return
             }
         }
         this.tail[i] = { x: this.x, y: this.y }
@@ -128,7 +124,7 @@ function Snake(len, dx=1, dy=0) {
             this.tail[0].x*cell+pad, this.tail[0].y*cell+pad,
             cell-pad, cell-pad
         )
-        drawCell(this.x, this.y)
+        drawCell(this)
     }
 
     for (var i = 0; i <= len; i++) {
@@ -174,7 +170,7 @@ function gameLoop() {
         view_len.innerHTML   = snake.tail.length - 1
         view_moves.innerHTML = moves
         snake.draw()
-        if (snake.eat(food.x, food.y)) {
+        if (snake.eat(food)) {
             food.generate()
             food.draw()
         }

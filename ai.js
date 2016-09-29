@@ -51,7 +51,6 @@ function aiLoop(algo) {
         setTimeout(anotherLoop, delay)
     }
     anotherLoop();
-    // TODO wait till moves are complete and repeat
 }
 
 
@@ -76,7 +75,5 @@ function path2direction(path) {
         console.log("(%d, %d) → (%d, %d): %s", x0, y0, x1, y1, dir[i-1])
         x0 = x1; y0 = y1
     }
-    // console.log(dir.length, path.length)
-    // dir.push(dir[dir.length-1])
     return dir
 }
