@@ -25,12 +25,12 @@
 
       <h4>AI</h4>
       <p>nodes <span id="view_nodes">0</span></p>
+      <input id="ai" type="checkbox" onclick="toggle_ai()">
       <select id="ai_type">
         <option value="a_star">A*</option>
         <option value="bfs">Breath First Search</option>
         <option value="dfs">Depth First Search</option>
       </select>
-      <button id="ai" style="width:50px" onclick="toggle_ai()">ON</button>
       <p>press 'a' to toggle AI</p>
     </div>
     <div>
@@ -39,9 +39,8 @@
     </div>
   </body>
   <script src="snake.js"></script>
-  <script src="pathfinding-browser.js"></script>
+  <script src="pathfinding-browser.min.js"></script>
   <script src="ai.js"></script>
-
   <script>
     banner("SNAKE");
     window.addEventListener("keydown", keyBinding, true)
