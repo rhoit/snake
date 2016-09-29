@@ -29,9 +29,10 @@ function collision(pos0, pos1) {
 
 
 function bound(val, lower, upper) {
-    if (lower <= val && upper >= val) return val
+    if (lower <= val && upper >= val) return true
     drawCell(snake, "yellow") // show collision
     die("wall")
+    return false
 }
 
 
@@ -40,7 +41,9 @@ function die(msg) {
     clearInterval(interval)
     interval = null
     dead     = snake
-    snake    = null
+
+    delete snake
+    snake = null
     banner("GAME OVER")
 }
 
@@ -105,8 +108,9 @@ function Snake(len, dx=1, dy=0) {
         x = this.x + this.dx
         y = this.y + this.dy
 
-        this.x = bound(x, 0, cols)
-        this.y = bound(y, 0, rows)
+        if (bound(x, 0, cols)) this.x = x; else return
+        if (bound(y, 0, rows)) this.y = y; else return
+
         for (var i = 0; i < this.tail.length - 1; i++) {
             this.tail[i] = this.tail[i+1]
             if (this.eat(this.tail[i])) {
