@@ -1,3 +1,7 @@
+var aiActive = false
+var aiSearch = new PF.AStarFinder()
+var grid     = null
+
 var aiControl = {
     "left" : function () { snake.dir(-1, 0); },
     "up"   : function () { snake.dir(0, -1); },
@@ -15,36 +19,40 @@ function manhatDist(x0, x1, y0, y1) {
 }
 
 
-function toggle_ai() {
-    // console.log(ai_type.value)
-    // if (ai.innerHTML === "ON") ai.innerHTML = "OFF"
-    // else {    // ai.innerHTML = "ON"
+function aiToggle() {
     if (snake === null) {
         newGame()
     }
-
     clearInterval(interval)
     interval = null
-    aiLoop(new PF.AStarFinder())
+    aiActive = !aiActive
+    toggle_ai.checked = aiActive
+    if (aiActive) aiLoop()
 }
 
 
-function aiLoop(algo) {
-    var grid = new PF.Grid(rows, cols)
+function aiLoop() {
+    delete grid
+    grid = new PF.Grid(rows, cols)
     for (var i = 1; i < snake.tail.length - 1; i++) {
         grid.setWalkableAt(snake.tail[i].x, snake.tail[i].y, false)
     }
 
-    var path = algo.findPath(snake.x, snake.y, food.x, food.y, grid)
+    var path = aiSearch.findPath(snake.x, snake.y, food.x, food.y, grid)
+    if (path.length == 0) {
+        console.log(path)
+        return
+    }
     var dir  = path2direction(path)
 
     function anotherLoop() {
         if (dir.length === 0) {
             console.log("new food: (%d, %d)", food.x, food.y)
-            return aiLoop(new PF.AStarFinder())
+            return aiLoop()
         }
         if (snake === null) return
         if (interval != null) return
+        if (!aiActive) return
         aiControl[dir[0]]()
         gameLoop()
         dir = dir.slice(1, dir.length);

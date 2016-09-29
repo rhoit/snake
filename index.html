@@ -1,7 +1,11 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Snake</title>
+
+    <link rel="stylesheet" href="main.css">
   </head>
 
   <body>
@@ -10,7 +14,7 @@
       <canvas id="canvas_grid" width="342px" height="342px" style="position:absolute; z-index:1">
         Browser Won't Support, Update it fast!
       </canvas>
-      <canvas id="canvas_snake" width="342px" height="342px" style="background-color: #333333;">
+      <canvas id="canvas_snake" width="342px" height="342px">
         Browser Won't Support, Update it fast!
       </canvas>
     </div>
@@ -23,23 +27,38 @@
         </table>
       </div>
 
-      <h4>AI</h4>
-      <p>nodes <span id="view_nodes">0</span></p>
-      <input id="ai" type="checkbox" onclick="toggle_ai()">
-      <select id="ai_type">
-        <option value="a_star">A*</option>
-        <option value="bfs">Breath First Search</option>
-        <option value="dfs">Depth First Search</option>
-      </select>
-      <p>press 'a' to toggle AI</p>
+      <h4>
+        <input id="toggle_ai" type="checkbox" onclick="aiToggle()" />
+        bot
+      </h4>
+      <p>press 'a' to toggle bot</p>
+      <table>
+        <tr><td>nodes</td><td id="view_nodes">0</td>
+        <tr>
+          <td>search</td>
+          <td>
+            <select id="select_ai">
+              <option value="a_star">A*</option>
+              <option value="bfs">Breath First Search</option>
+              <option value="dfs">Depth First Search</option>
+            </select>
+          </td>
+        </tr>
+      </table>
     </div>
+
     <div>
+
+
       <input id="toggle_grid" type="checkbox" onclick="drawGridToggle(this)">grid</input>
       <input id="toggle_wall" type="checkbox" onclick="wallToggle(this)">wall</input>
+      delay:
+      <input id="input_delay" type="number" onchange="delayChange(this)" min=10 max=200 step=5 value=100 />
     </div>
   </body>
   <script src="snake.js"></script>
-  <script src="pathfinding-browser.min.js"></script>
+  <script src="interface.js"></script>
+  <script src="pathfinding-browser.js"></script>
   <script src="ai.js"></script>
   <script>
     banner("SNAKE");
@@ -48,33 +67,9 @@
         "keydown",
         function (event) {
             if (event.keyCode == 65) {
-                toggle_ai()
+                aiToggle()
             }
         }
     )
-    var gctx  = canvas_grid.getContext('2d')
-
-    function drawGridToggle(element) {
-        if (! element.checked) {
-            gctx.clearRect(0, 0, width, height)
-            return
-        }
-
-        gctx.lineWidth   = 1
-        gctx.strokeStyle = '#444444'
-
-        for ( var i=0; i <= cols + 1; i++) {
-            gctx.beginPath();
-            gctx.moveTo(i*cell+1, 0);
-            gctx.lineTo(i*cell+1, height);
-            gctx.stroke();
-        }
-        for ( var i=0; i <= rows + 1; i++) {
-            gctx.beginPath();
-            gctx.moveTo(0, i*cell+1);
-            gctx.lineTo(width, i*cell+1);
-            gctx.stroke();
-        }
-    }
   </script>
 </html>

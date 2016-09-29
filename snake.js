@@ -83,8 +83,9 @@ var food = new function() {
 
 
 function Snake(len, dx=1, dy=0) {
-    this.x = 0
-    this.y = 1
+    // in standard game snake start at center
+    this.x = cols/2
+    this.y = rows/2
 
     // first var is the after image
     // last  var is the head
