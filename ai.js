@@ -19,6 +19,12 @@ function manhatDist(x0, x1, y0, y1) {
 }
 
 
+function aiOff() {
+    aiActive = false
+    toggle_ai.checked = aiActive
+}
+
+
 function aiToggle() {
     if (snake === null) {
         newGame()
@@ -29,6 +35,7 @@ function aiToggle() {
     toggle_ai.checked = aiActive
     if (aiActive) aiLoop()
 }
+
 
 
 function aiLoop() {
@@ -50,9 +57,9 @@ function aiLoop() {
             console.log("new food: (%d, %d)", food.x, food.y)
             return aiLoop()
         }
-        if (snake === null) return
-        if (interval != null) return
-        if (!aiActive) return
+        if (snake === null) return aiOff()
+        if (interval != null) return aiOff()
+        if (!aiActive) return aiOff()
         aiControl[dir[0]]()
         gameLoop()
         dir = dir.slice(1, dir.length);

@@ -25,4 +25,8 @@ function drawGridToggle(element) {
 
 function delayChange(element) {
     delay = element.value
+    if (interval != null) {
+        clearInterval(interval)
+        interval = setInterval(gameLoop, delay)
+    }
 }
