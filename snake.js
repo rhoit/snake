@@ -23,8 +23,7 @@ function drawCell(pos, fill='#abffab', alpha=0.6) {
 
 
 function collision(pos0, pos1) {
-    if ( pos0.x == pos1.x && pos0.y == pos1.y) return false
-    return true
+    return pos0.x == pos1.x && pos0.y == pos1.y
 }
 
 
@@ -69,7 +68,7 @@ var food = new function() {
 
         // don't place food on the snake
         for (var i = 1; i < snake.tail.length; i++) {
-            if (collision(snake.tail[i], this)) continue
+            if (!collision(snake.tail[i], this)) continue
             console.log("food collide: (%d, %d)", this.x, this.y)
             this.generate()
             break
@@ -100,7 +99,7 @@ function Snake(len, dx=1, dy=0) {
     }
 
     this.eat = function(pos) {
-        if (collision(this, pos)) return false
+        if (!collision(this, pos)) return false
         this.tail.push({ x: this.x, y:this.y })
         return true
     }
