@@ -37,14 +37,16 @@ function aiToggle() {
 }
 
 
-
-function aiLoop() {
-    delete grid
+function makeGrid() {
     grid = new PF.Grid(rows, cols)
     for (var i = 1; i < snake.tail.length - 1; i++) {
         grid.setWalkableAt(snake.tail[i].x, snake.tail[i].y, false)
     }
+}
 
+
+function aiLoop() {
+    makeGrid()
     var path = aiSearch.findPath(snake.x, snake.y, food.x, food.y, grid)
     if (path.length == 0) {
         console.log(path)

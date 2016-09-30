@@ -35,7 +35,7 @@
       <table>
         <tr><td>nodes</td><td id="view_nodes">0</td>
         <tr>
-          <td>search</td>
+          <td>path search</td>
           <td>
             <select id="select_ai">
               <option value="a_star">A*</option>
@@ -53,7 +53,7 @@
       <input id="toggle_grid" type="checkbox" onclick="drawGridToggle(this)">grid</input>
       <input id="toggle_wall" type="checkbox" onclick="wallToggle(this)">wall</input>
       delay:
-      <input id="input_delay" type="number" onchange="delayChange(this)" min=10 max=200 step=5 value=100 />
+      <input id="input_delay" type="number" onchange="delayChange(this)" min=0 max=200 step=5 value=100 />
     </div>
   </body>
   <script src="snake.js"></script>
