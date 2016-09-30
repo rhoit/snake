@@ -38,7 +38,7 @@ function aiToggle() {
 
 
 function makeGrid() {
-    grid = new PF.Grid(rows, cols)
+    grid = new PF.Grid(rows+1, cols+1)
     for (var i = 1; i < snake.tail.length - 1; i++) {
         grid.setWalkableAt(snake.tail[i].x, snake.tail[i].y, false)
     }

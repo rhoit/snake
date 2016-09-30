@@ -88,8 +88,8 @@ var food = new function() {
 
 function Snake(len, dx=1, dy=0) {
     // in standard game snake start at center
-    this.x = cols/2
-    this.y = rows/2
+    this.x = Math.floor(cols/2)
+    this.y = Math.floor(rows/2)
 
     // first var is the after image
     // last  var is the head
@@ -167,7 +167,7 @@ function keyBinding(event) {
         case 38: userControl(0, -1); break // UP
         case 39: userControl(+1, 0); break // RIGHT
         case 40: userControl(0, +1); break // DOWN
-        case 80: pause(); break
+        case 80: pause();            break // p/P
     }
 }
 
