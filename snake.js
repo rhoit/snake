@@ -15,6 +15,11 @@ var interval = null
 var moves    = 0
 
 
+function cleanCell(pos) {
+    ctx.clearRect(pos.x*cell+pad, pos.y*cell+pad, cell-pad, cell-pad)
+}
+
+
 function drawCell(pos, fill='#abffab', alpha=0.6) {
     ctx.fillStyle   = fill
     ctx.globalAlpha = alpha
@@ -124,10 +129,7 @@ function Snake(len, dx=1, dy=0) {
     }
 
     this.draw = function() {
-        ctx.clearRect(
-            this.tail[0].x*cell+pad, this.tail[0].y*cell+pad,
-            cell-pad, cell-pad
-        )
+        cleanCell(this.tail[0])
         drawCell(this)
     }
 
@@ -144,6 +146,16 @@ function userControl(dx, dy) {
 }
 
 
+function pause() {
+    if (interval === null) {
+        interval = setInterval(gameLoop, delay)
+    } else {
+        clearInterval(interval)
+        interval = null
+    }
+}
+
+
 function keyBinding(event) {
     if (snake === null) {
         newGame()
@@ -155,14 +167,7 @@ function keyBinding(event) {
         case 38: userControl(0, -1); break // UP
         case 39: userControl(+1, 0); break // RIGHT
         case 40: userControl(0, +1); break // DOWN
-        case 80: // 'p' pause toggle
-            if (interval === null) {
-                interval = setInterval(gameLoop, delay)
-            } else {
-                clearInterval(interval)
-                interval = null
-            }
-            break
+        case 80: pause(); break
     }
 }
 
@@ -183,10 +188,10 @@ function gameLoop() {
 }
 
 
-function newGame() {
+function newGame(length=3) {
     ctx.clearRect(0, 0, width, height)
     moves = 0
-    snake = new Snake(3)
+    snake = new Snake(length)
     food.generate()
     food.draw()
     interval = setInterval(gameLoop, delay)
